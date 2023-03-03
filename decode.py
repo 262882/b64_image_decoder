@@ -20,7 +20,8 @@ if not album:
 elif album:
     img_list = glob.glob(os.path.join('./',"*.json"))
 
-for name in img_list:
+for count, name in enumerate(img_list):
+    print(count+1, "/", len(img_list), "Images processed")
 
     with open(name, 'r') as input_file:
         img_dict = json.load(input_file)
