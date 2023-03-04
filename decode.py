@@ -31,7 +31,7 @@ for count, name in enumerate(img_list):
     m = img_dict['h_img']  # Image height
     n = img_dict['w_img']  # Image width
     output_img = np.reshape(np.frombuffer(img_bytes, dtype='uint8'), (m,n,c))
-    output_img = output_img[::-1,::-1,:]  # Rotate 180 degrees
+    output_img = output_img[::-1]  # Rotate 180 degrees
 
     # store result
     output = Image.fromarray(output_img)
