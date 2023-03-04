@@ -1,5 +1,9 @@
 # Images
 *.jpeg
+*.json
+!test_img1.json
+!test_img2.json
+!test_img3.json
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
