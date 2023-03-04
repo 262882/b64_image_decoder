@@ -30,13 +30,9 @@ for count, name in enumerate(img_list):
     c = 3  # Channels
     m = img_dict['h_img']  # Image height
     n = img_dict['w_img']  # Image width
+    output_img = np.reshape(np.frombuffer(img_bytes, dtype='uint8'), (m,n,c))
+    output_img = output_img[::-1,::-1,:]  # Rotate 180 degrees
 
-    output_img = np.zeros([m, n, c],dtype='uint8')
-    for k in range(c):
-        for j in range(m):
-            for i in range(n):
-                ind = 3*(i) + 3*j*n + k
-                output_img[-j,-i,k]=img_bytes[ind]
-
+    # store result
     output = Image.fromarray(output_img)
     output.save(name[:-5] + ".jpeg")
