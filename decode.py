@@ -39,29 +39,21 @@ for count, name in enumerate(img_list):
     ball_vector = np.asarray(img_dict["ball_locate"])
     if img_dict["ball_sighted"]==1 and np.sum(np.abs(ball_vector)) != 0 :
         BALL_RAD = 0.042
-        FOV = 120
+        FOV = 58
         r_ball = ball_vector[0]
         theta_ball = ball_vector[1]
         phi_ball = ball_vector[2]
 
-        # 2D implane through ball centre
-        r_implane_theta = r_ball*np.cos(np.deg2rad(theta_ball)) 
-        r_implane_phi = r_ball*np.cos(np.deg2rad(phi_ball))
-        r_implane = np.sqrt(r_implane_theta**2 + r_implane_phi**2)
-        print(name, r_implane)
-
-        w_implane = r_implane*np.tan(np.deg2rad(FOV//2))*2
+        # Image plane properties
         resolution = max(m,n)
+        w_implane = r_ball*np.tan(np.deg2rad(FOV//2))*2
         BALL_RAD_implane = int((BALL_RAD/w_implane*resolution))
 
-        #implane_width_theta = r_implane_theta*np.tan(np.deg2rad(FOV//2))
-        #implane_width_phi = r_implane_phi*np.tan(np.deg2rad(FOV//2))
-        #implane_rad = int((BALL_RAD/implane_width)*(n//2))
-
-        m_delta_implane = r_ball*np.sin(np.deg2rad(theta_ball))
-        n_delta_implane = r_ball*np.sin(np.deg2rad(phi_ball))
-        m_coord = -int(n_delta_implane/(w_implane/2)*(resolution/2))+(m//2)
-        n_coord = -int(m_delta_implane/(w_implane/2)*(resolution/2))+(n//2)
+        # Localization
+        m_delta_implane = phi_ball/(FOV/2)
+        n_delta_implane = theta_ball/(FOV/2)
+        m_coord = -int(m_delta_implane*(resolution/2))+(m//2)
+        n_coord = -int(n_delta_implane*(resolution/2))+(n//2)
 
         cv2.circle(output_img, (n_coord, m_coord), BALL_RAD_implane,  (255, 0, 0), 1)
 
