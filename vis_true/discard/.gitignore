@@ -2,6 +2,5 @@
 *
 # Except this file
 !.gitignore
-!sort_discard.py
-!keep/
-!discard/
+!sort_salvage.py
+!salvage/

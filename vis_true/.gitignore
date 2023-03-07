@@ -3,3 +3,6 @@
 # Except this file
 !.gitignore
 !sort_occlusion.py
+!discard/
+!occl_false/
+!occl_true/
