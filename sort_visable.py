@@ -6,6 +6,7 @@ import sys
 import os
 import glob
 import uuid
+import numpy as np
 
 img_list = glob.glob(os.path.join('./',"*.json"))
 prefix = str(uuid.uuid4().fields[-1])[:5]
