@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Decode base64 encoded images"""
+"""Select image to set ball sighted to false"""
 
 from base64 import decodebytes
 import json
@@ -9,6 +9,12 @@ import glob
 from PIL import Image
 import numpy as np
 import cv2
+
+output_dir = "vis_false"
+try:
+   os.makedirs(output_dir)
+except FileExistsError:
+   pass
 
 img_list = glob.glob(os.path.join('./',"*.json"))
 
@@ -27,6 +33,7 @@ for count, name in enumerate(img_list):
     output_img = output_img[::-1].copy()   # Rotate 180 degrees
 
     # Process bounding box
+
     ball_vector = np.asarray(img_dict["ball_locate"])
     if img_dict["ball_sighted"]==1 and np.sum(np.abs(ball_vector)) != 0 :
         BALL_RAD = 0.042
@@ -50,24 +57,20 @@ for count, name in enumerate(img_list):
 
         # Display and sort
         cv2.imshow('Frame', output_img)
-        des = print("o - Occluded? d - Discard? q - Quit? - Otherwise any key)")
+        des = print("s - Set not visible? q - Quit? - Otherwise any key)")
         key = cv2.waitKey()
 
         # Process file
-        if key==ord('o'):
-            print("Occluded")
-            with open("./occl_true/" + name[2:], 'w') as out_file:
+        if key==ord('s'):
+            print("Set not visible")
+            img_dict["ball_sighted"]=0
+            img_dict["ball_locate"]=[0, 0, 0]
+
+            with open("./" + output_dir + "/" + name[2:], 'w') as out_file:
                 json.dump(img_dict, out_file)
 
-        elif key==ord('d'):
-            print("Discarded")
-            with open("./discard/" + name[2:], 'w') as out_file:
-                json.dump(img_dict, out_file)
-
-        elif key==ord('q'):
+        if key==ord('q'):
             break
 
         else: 
-            print("Not occluded")
-            with open("./occl_false/" + name[2:], 'w') as out_file:
-                json.dump(img_dict, out_file)
+            print("Pass")

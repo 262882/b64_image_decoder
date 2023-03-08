@@ -10,6 +10,12 @@ from PIL import Image
 import numpy as np
 import cv2
 
+output_dir = "seperate"
+try:
+   os.makedirs(output_dir)
+except FileExistsError:
+   pass
+
 img_list = glob.glob(os.path.join('./',"*.json"))
 
 for count, name in enumerate(img_list):
@@ -28,23 +34,20 @@ for count, name in enumerate(img_list):
 
     # Process bounding box
     ball_vector = np.asarray(img_dict["ball_locate"])
-    if img_dict["ball_sighted"]==0 and np.sum(np.abs(ball_vector)) == 0 :
 
-        # Display and sort
-        cv2.imshow('Frame', output_img)
-        des = print("d - Discard? q - Quit? - Otherwise any key)")
-        key = cv2.waitKey()
+    # Display and sort
+    cv2.imshow('Frame', output_img)
+    des = print("s - Seperate? q - Quit? - Otherwise any key)")
+    key = cv2.waitKey()
 
-        # Process file
-        if key==ord('d'):
-            print("Discarded")
-            with open("./discard/" + name[2:], 'w') as out_file:
-                json.dump(img_dict, out_file)
+    # Process file
+    if key==ord('s'):
+        print("Seperate")
+        with open("./" + output_dir + "/" + name[2:], 'w') as out_file:
+            json.dump(img_dict, out_file)
 
-        elif key==ord('q'):
-            break
+    elif key==ord('q'):
+        break
 
-        else: 
-            print("Kept")
-            with open("./keep/" + name[2:], 'w') as out_file:
-                json.dump(img_dict, out_file)
+    else: 
+        print("Pass")

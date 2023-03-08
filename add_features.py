@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Decode base64 encoded images"""
+"""Add key-value pair to json file"""
 
 import json
 import sys
@@ -18,7 +18,7 @@ for count, name in enumerate(img_list):
         img_dict = json.load(input_file)
         
     ball_vector = np.asarray(img_dict["ball_locate"])
-    img_dict["type"]="game"
+    img_dict["type"]="drill"
     img_dict["occluded"]=False
 
     with open("./processed/" + name[2:], 'w') as out_file:

@@ -41,6 +41,12 @@ def add_bb(image, ball_vector):
 
 if __name__ == "__main__":
 
+    output_dir = "decode"
+    try:
+        os.makedirs(output_dir)
+    except FileExistsError:
+        pass
+
     include_bb = True
     img_list = []
     if len(sys.argv)==1:
@@ -68,4 +74,4 @@ if __name__ == "__main__":
 
         # store result
         output = Image.fromarray(output_img)
-        output.save(name[:-5] + ".jpeg")
+        output.save("./" + output_dir + "/" + name[:-5] + ".jpeg")
