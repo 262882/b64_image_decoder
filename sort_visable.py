@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Decode base64 encoded images"""
+"""Sort by ball visibility and add unique number to json data"""
 
 import json
 import sys

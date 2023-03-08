@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Decode base64 encoded images"""
+"""Seperate out files from json dataset"""
 
 from base64 import decodebytes
 import json

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Decode base64 encoded images"""
+"""Split json data into train, validation, test datasets"""
 
 import json
 import sys

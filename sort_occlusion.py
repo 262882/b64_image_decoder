@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Decode base64 encoded images"""
+"""Seperate json dataset files into occluded, visible or discard sub sets"""
 
 from base64 import decodebytes
 import json
