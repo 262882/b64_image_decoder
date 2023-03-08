@@ -2,10 +2,8 @@
 """Split json data into train, validation, test datasets"""
 
 import json
-import sys
 import os
 import glob
-import uuid
 import numpy as np
 
 output_dir1 = "train"

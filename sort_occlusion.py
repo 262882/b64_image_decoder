@@ -1,12 +1,9 @@
 #!/usr/bin/env python3
 """Seperate json dataset files into occluded, visible or discard sub sets"""
 
-from base64 import decodebytes
 import json
-import sys
 import os
 import glob
-from PIL import Image
 import numpy as np
 import cv2
 from decode import decode, add_bb

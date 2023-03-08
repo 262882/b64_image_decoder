@@ -2,7 +2,6 @@
 """Sort by ball visibility and add unique number to json data"""
 
 import json
-import sys
 import os
 import glob
 import uuid

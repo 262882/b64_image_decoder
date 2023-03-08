@@ -1,12 +1,9 @@
 #!/usr/bin/env python3
 """Select image to set ball sighted to false"""
 
-from base64 import decodebytes
 import json
-import sys
 import os
 import glob
-from PIL import Image
 import numpy as np
 import cv2
 from decode import decode, add_bb
