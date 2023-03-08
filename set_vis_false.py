@@ -10,9 +10,9 @@ from decode import decode, add_bb
 
 output_dir = "vis_false"
 try:
-   os.makedirs(output_dir)
+    os.makedirs(output_dir)
 except FileExistsError:
-   pass
+    pass
 
 img_list = glob.glob(os.path.join('./',"*.json"))
 
