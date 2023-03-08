@@ -8,6 +8,24 @@ import glob
 import uuid
 import numpy as np
 
+output_dir1 = "train"
+try:
+    os.makedirs(output_dir1)
+except FileExistsError:
+    pass
+
+output_dir2 = "validation"
+try:
+    os.makedirs(output_dir2)
+except FileExistsError:
+    pass
+
+output_dir3 = "test"
+try:
+    os.makedirs(output_dir3)
+except FileExistsError:
+    pass
+
 img_list = glob.glob(os.path.join('./',"*.json"))
 sort_order = np.arange(len(img_list))
 np.random.shuffle(sort_order)
@@ -25,14 +43,14 @@ for count, name in enumerate(img_list):
     with open(name, 'r') as input_file:
         img_dict = json.load(input_file)
     
-    if count in sort_order[:train_idx-1]:
-        with open("./train/" + name[2:], 'w') as out_file:
+    if count in sort_order[:train_idx]:
+        with open("./" + output_dir1 + "/" + name[2:], 'w') as out_file:
             json.dump(img_dict, out_file)
 
-    elif count in sort_order[-test_idx:]:
-        with open("./test/" + name[2:], 'w') as out_file:
+    elif count in sort_order[-(test_idx+1):]:
+        with open("./" + output_dir3 + "/" + name[2:], 'w') as out_file:
             json.dump(img_dict, out_file)
 
     else:
-        with open("./validation/" + name[2:], 'w') as out_file:
+        with open("./" + output_dir2 + "/" + name[2:], 'w') as out_file:
             json.dump(img_dict, out_file)
