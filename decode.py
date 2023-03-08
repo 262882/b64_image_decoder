@@ -37,7 +37,7 @@ def add_bb(image, ball_vector):
     n_coord = -int(n_delta_implane*(resolution/2))+(n//2)
 
     cv2.rectangle(image, (n_coord - BALL_RAD_implane, m_coord - BALL_RAD_implane), 
-                              (n_coord + BALL_RAD_implane, m_coord + BALL_RAD_implane), (255, 0, 0), 2)
+                              (n_coord + BALL_RAD_implane, m_coord + BALL_RAD_implane), (0, 0, 255), 2)
 
 if __name__ == "__main__":
 

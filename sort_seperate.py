@@ -9,6 +9,7 @@ import glob
 from PIL import Image
 import numpy as np
 import cv2
+from decode import decode, add_bb
 
 output_dir = "seperate"
 try:
@@ -24,16 +25,7 @@ for count, name in enumerate(img_list):
     with open(name, 'r') as input_file:
         img_dict = json.load(input_file)
 
-    # Process image
-    img_bytes = decodebytes(img_dict['img'].encode('ascii'))
-    c = 3  # Channels
-    m = img_dict['h_img']  # Image height
-    n = img_dict['w_img']  # Image width
-    output_img = np.reshape(np.frombuffer(img_bytes, dtype='uint8'), (m,n,c))
-    output_img = output_img[::-1].copy()   # Rotate 180 degrees
-
-    # Process bounding box
-    ball_vector = np.asarray(img_dict["ball_locate"])
+    output_img = decode(img_dict['img'], img_dict['h_img'], img_dict['w_img'])
 
     # Display and sort
     cv2.imshow('Frame', output_img)
