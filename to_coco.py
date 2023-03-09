@@ -24,10 +24,10 @@ occlusion_options = [False, True]  # Either or both
 type_options = ["game", "drill"]  # Either or both
 
 set = set_options[0]
-size = size_options[:]
+size = size_options[0]
 sighted = sighted_options[:]
 occlusion = occlusion_options[0]
-type = type_options[:]
+type = type_options[0]
 
 output_dir = (
     "./" + output_prefix 
@@ -43,7 +43,6 @@ except FileExistsError:
     pass
 
 img_list = glob.glob(os.path.join('./'+ set + "/", "*.json"))
-print(img_list)
 
 info = {
     "description": "RoboCup Ball detection Dataset: " + set,
