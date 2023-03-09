@@ -121,7 +121,7 @@ for count, name in enumerate(img_list):
         n_coord = -int(n_delta_implane*(resolution/2))+(n//2)
 
         bb_coords = [n_coord - BALL_RAD_implane, m_coord - BALL_RAD_implane,  # Top left coordds 
-                     BALL_RAD_implane, BALL_RAD_implane]                      # Width and height
+                     2*BALL_RAD_implane, 2*BALL_RAD_implane]                      # Width and height
 
         if size == "s":
             if 2*BALL_RAD_implane <= SMALL_THRES:
