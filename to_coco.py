@@ -9,18 +9,34 @@ from datetime import date
 from decode import decode
 from PIL import Image
 
+def iterable_list(in_list):
+    if isinstance(in_list, list):
+        return in_list
+    else:
+        return [in_list]
+
 output_prefix = "coco"
 
-set_options = ["train", "validation", "test"]
-range_options = ["all", "near", "far"]
-type_options = [["game", "drill"], "game", "drill"]
-occlusion_options = [["exclude", "include"], "exclude", "include"]
-set = set_options[0]
-range = range_options[1]
-type = type_options[0]
-occlusion = occlusion_options[1]
+set_options = ["train", "validation", "test"]  # Only choose one
+size_options = ["s", "m", "l"]  # One or all
+sighted_options = [0, 1]  # Either or both
+occlusion_options = [False, True]  # Either or both
+type_options = ["game", "drill"]  # Either or both
 
-output_dir = "./" + output_prefix+ "_" + set + "_" + range + "_" + type + "_" + occlusion + "/"
+set = set_options[0]
+size = size_options[:]
+sighted = sighted_options[:]
+occlusion = occlusion_options[0]
+type = type_options[:]
+
+output_dir = (
+    "./" + output_prefix 
+    + "_" + set 
+    + "_" + "".join(size) 
+    + "_" + "".join(str(val) for val in iterable_list(sighted))
+    + "_" + "".join(str(val) for val in iterable_list(occlusion))
+    + "_" + "".join(type)  + "/")
+
 try:
     os.makedirs(output_dir)
 except FileExistsError:
@@ -30,7 +46,7 @@ img_list = glob.glob(os.path.join('./'+ set + "/", "*.json"))
 print(img_list)
 
 info = {
-    "description": "RoboCup Ball detection Dataset: " + type,
+    "description": "RoboCup Ball detection Dataset: " + set,
     "url": "https://gitlab.com/robocup-sim",
     "version": "1.0",
     "year": str(date.today())[:4],
@@ -55,36 +71,44 @@ img_id = 1
 annotations = []
 anno_id = 1
 
-
 for count, name in enumerate(img_list):
     print(count+1, "/", len(img_list), "Images processed")
 
     with open(name, 'r') as input_file:
         img_dict = json.load(input_file)
 
-    if img_dict["occluded"] in occlusion:
-        continue
-    else:
+    if img_dict["ball_sighted"] in iterable_list(sighted):
         pass
+    else:
+        print("Skipped for sighted")
+        continue
 
-    if img_dict["type"] in type:
-        continue
-    else:
+    if img_dict["occluded"] in iterable_list(occlusion):
         pass
+    else:
+        print("Skipped for occlusion")
+        continue
+
+    if img_dict["type"] in iterable_list(type):
+        pass
+    else:
+        print("Skipped for type")
+        continue
 
     output_img = decode(img_dict['img'], img_dict['h_img'], img_dict['w_img'])
+    m, n = output_img.shape[:2]
 
-    if img_dict["ball_sighted"]==1:
+    if img_dict["ball_sighted"] ==1:
 
         ball_vector = np.asarray(img_dict["ball_locate"])
 
-        NEAR_THRES = 16  # height in pixels
+        SMALL_THRES = 32  # height in pixels
+        LARGE_THRES = 96 
         BALL_RAD = 0.042
         FOV = 58
         r_ball = ball_vector[0]
         theta_ball = ball_vector[1]
         phi_ball = ball_vector[2]
-        m, n = output_img.shape[:2]
 
         # Image plane properties
         resolution = max(m,n)
@@ -98,22 +122,31 @@ for count, name in enumerate(img_list):
         n_coord = -int(n_delta_implane*(resolution/2))+(n//2)
 
         bb_coords = [n_coord - BALL_RAD_implane, m_coord - BALL_RAD_implane, 
-                    n_coord + BALL_RAD_implane, m_coord + BALL_RAD_implane]
+                     n_coord + BALL_RAD_implane, m_coord + BALL_RAD_implane]
 
-        if range == "near":
-            if 2*BALL_RAD_implane <= NEAR_THRES:
-                continue
-            else:
+        if size == "s":
+            if 2*BALL_RAD_implane <= SMALL_THRES:
                 pass
+            else:
+                print("Skipped for size")
+                continue
 
-        elif range == "far":
-            if 2*BALL_RAD_implane > NEAR_THRES:
-                continue
-            else:
+        elif size == "m":
+            if 2*BALL_RAD_implane > SMALL_THRES and 2*BALL_RAD_implane < LARGE_THRES:
                 pass
+            else:
+                print("Skipped for size")
+                continue
+
+        elif size == "l":
+            if 2*BALL_RAD_implane > LARGE_THRES:
+                pass
+            else:
+                print("Skipped for size")
+                continue
         
         else:
-            continue
+            pass
 
         annotations.append({
             "area": (2*BALL_RAD_implane)**2,
