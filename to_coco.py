@@ -24,10 +24,10 @@ occlusion_options = [False, True]  # Either or both
 type_options = ["game", "drill"]  # Either or both
 
 set = set_options[0]
-size = size_options[0]
-sighted = sighted_options[:]
+size = size_options[1]  # Large == close
+sighted = sighted_options[1]
 occlusion = occlusion_options[0]
-type = type_options[0]
+type = type_options[:]
 
 output_dir = (
     "./" + output_prefix 
@@ -60,7 +60,7 @@ licenses = [{
     }]
 
 categories = [{
-    "id": 0,
+    "id": 1,
     "name": "Ball",
     "supercategory": "none"
     }]
@@ -151,7 +151,7 @@ for count, name in enumerate(img_list):
             "area": (2*BALL_RAD_implane)**2,
             "iscrowd": 0,
             "bbox": bb_coords,
-            "category_id": 0,
+            "category_id": 1,
             "ignore": 0,
             "segmentation": [],
             "image_id": img_id,
