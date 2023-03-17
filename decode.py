@@ -27,7 +27,7 @@ def add_bb(image, ball_vector):
 
     # Image plane properties
     resolution = max(m,n)
-    w_implane = r_ball*np.tan(np.deg2rad(FOV//2))*2
+    w_implane = r_ball*np.radians(FOV//2)*2
     BALL_RAD_implane = int((BALL_RAD/w_implane*resolution))
 
     # Localization
