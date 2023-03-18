@@ -68,7 +68,7 @@ if __name__ == "__main__":
 
         output_img = decode(img_dict['img'], img_dict['h_img'], img_dict['w_img'])
 
-        if include_bb and img_dict["ball_sighted"]==1:
+        if include_bb and (img_dict["ball_sighted"]==1 and np.linalg.norm(img_dict["ball_locate"])>0):
             ball_vector = np.asarray(img_dict["ball_locate"])
             add_bb(output_img, ball_vector)
 
