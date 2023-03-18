@@ -25,16 +25,31 @@ def add_bb(image, ball_vector):
     phi_ball = ball_vector[2]
     m, n = image.shape[:2]
 
+    # Coord transform local to camera
+    NAO_HEAD = 0.065/2  # Radius
+
+    r1_theta = r_ball*np.cos(np.radians(phi_ball))
+    h_theta = r1_theta*np.sin(np.radians(theta_ball))
+    theta_ball_cam = np.rad2deg(np.arctan2(h_theta,(r1_theta*np.cos(np.radians(theta_ball))-NAO_HEAD)))
+
+    r1_phi = r_ball*np.cos(np.radians(theta_ball))
+    h_phi = r1_phi*np.sin(np.radians(phi_ball))
+    phi_ball_cam = np.rad2deg(np.arctan2(h_phi,(r1_phi*np.cos(np.radians(phi_ball))-NAO_HEAD)))
+
+    #r2_theta = np.linalg.norm([(r1_theta*np.cos(np.radians(theta_ball))-NAO_HEAD), h_theta])
+    #r2_phi = np.linalg.norm([(r1_phi*np.cos(np.radians(phi_ball))-NAO_HEAD), h_phi])
+    #r_ball_cam = np.linalg.norm([r2_theta, r2_phi])
+
     # Image plane properties
     resolution = max(m,n)
     w_implane = r_ball*np.radians(FOV//2)*2
     BALL_RAD_implane = int((BALL_RAD/w_implane*resolution))
 
     # Localization
-    m_delta_implane = phi_ball/(FOV/2)
-    n_delta_implane = theta_ball/(FOV/2)
-    m_coord = -int(m_delta_implane*(resolution/2))+(m//2)
-    n_coord = -int(n_delta_implane*(resolution/2))+(n//2)
+    m_delta_implane = phi_ball_cam/(FOV/2)
+    n_delta_implane = theta_ball_cam/(FOV/2)
+    m_coord = int((m/2)-m_delta_implane*(resolution/2))
+    n_coord = int((n/2)-n_delta_implane*(resolution/2))
 
     cv2.rectangle(image, (n_coord - BALL_RAD_implane, m_coord - BALL_RAD_implane), 
                               (n_coord + BALL_RAD_implane, m_coord + BALL_RAD_implane), (0, 0, 255), 2)
