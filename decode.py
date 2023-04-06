@@ -9,7 +9,7 @@ import glob
 from PIL import Image
 import numpy as np
 import cv2
-from math import floor
+from math import floor, ceil, sqrt
 
 def decode(encoded_image, m, n):
     img_bytes = decodebytes(encoded_image.encode('ascii'))
@@ -21,37 +21,39 @@ def decode(encoded_image, m, n):
 def add_bb(image, ball_vector):
     BALL_RAD = 0.042
     FOV = 58
+    eff_FOV =  61  #2*np.arctan2(np.radians(np.tan(FOV/2)),sqrt(2))
     r_ball = ball_vector[0]
     theta_ball = ball_vector[1]
     phi_ball = ball_vector[2]
     m, n = image.shape[:2]
 
     # Coord transform local to camera
-    NAO_HEAD = 0.06  # Camera offset
-
-    # Cartesian to spherical
-    x = r_ball*np.cos(np.radians(phi_ball))*np.cos(np.radians(theta_ball))-NAO_HEAD
-    y = r_ball*np.cos(np.radians(phi_ball))*np.sin(np.radians(theta_ball))
-    z = r_ball*np.sin(np.radians(phi_ball))
+    NAO_HEAD = 0.065  # Camera offset
 
     # Spherical to cartesian
+    x = r_ball*np.cos(np.radians(phi_ball))*np.sin(np.radians(theta_ball))
+    y = r_ball*np.cos(np.radians(phi_ball))*np.cos(np.radians(theta_ball))-NAO_HEAD
+    z = r_ball*np.sin(np.radians(phi_ball))
+
+    # Cartesian to spherical
     r_ball_cam = np.linalg.norm([x,y,z])
     phi_ball_cam = np.rad2deg(np.arcsin(z/r_ball_cam))
-    theta_ball_cam = np.rad2deg(np.arctan(y/x))
+    theta_ball_cam = np.rad2deg(np.arctan2(x,y))
 
     # Image plane properties
     resolution = max(m,n)
     w_implane = r_ball_cam*np.radians(FOV//2)*2
-    BALL_RAD_implane = int((BALL_RAD/w_implane*resolution))
+    BALL_RAD_implane = (BALL_RAD/w_implane*resolution)
 
     # Localization
-    m_delta_implane = phi_ball_cam/(FOV/2)
-    n_delta_implane = theta_ball_cam/(FOV/2)
-    m_coord = int((m+0.5)/2-m_delta_implane*(resolution/2))
-    n_coord = int((n+0.5)/2-n_delta_implane*(resolution/2))
+    m_delta_implane = phi_ball_cam/(eff_FOV/2)
+    n_delta_implane = theta_ball_cam/(eff_FOV/2)
 
-    cv2.rectangle(image, (n_coord - BALL_RAD_implane, m_coord - BALL_RAD_implane), 
-                              (n_coord + BALL_RAD_implane, m_coord + BALL_RAD_implane), (0, 0, 255), 2)
+    m_coord = (m/2)-1-(m_delta_implane*(resolution/2))
+    n_coord = (n/2)-1-(n_delta_implane*(resolution/2))
+
+    cv2.rectangle(image, (ceil(n_coord - BALL_RAD_implane), ceil(m_coord - BALL_RAD_implane)), 
+                              (floor(n_coord + BALL_RAD_implane), floor(m_coord + BALL_RAD_implane)), (255, 0, 0), 2)
 
 if __name__ == "__main__":
 
