@@ -48,11 +48,13 @@ for count, name in enumerate(img_list):
         # Process file
         if key==ord('o'):
             print("Occluded")
+            img_dict["occluded"]=True
             with open("./" + output_dir1 + "/" + name[2:], 'w') as out_file:
                 json.dump(img_dict, out_file)
 
         elif key==ord('d'):
             print("Discarded")
+            img_dict["occluded"]=False
             with open("./" + output_dir3 + "/" + name[2:], 'w') as out_file:
                 json.dump(img_dict, out_file)
 
@@ -61,5 +63,6 @@ for count, name in enumerate(img_list):
 
         else: 
             print("Not occluded")
+            img_dict["occluded"]=False
             with open("./" + output_dir2 + "/" + name[2:], 'w') as out_file:
                 json.dump(img_dict, out_file)

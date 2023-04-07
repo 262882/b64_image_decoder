@@ -33,6 +33,7 @@ for count, name in enumerate(img_list):
         with open("./"+ output_dir1 + "/" + prefix + "_" + name[2:], 'w') as out_file:
             json.dump(img_dict, out_file)
 
-    elif img_dict["ball_sighted"]==0 and np.sum(np.abs(ball_vector)) == 0 :
+    elif img_dict["ball_sighted"]==0 and np.sum(np.abs(ball_vector)) == 0:
+        img_dict["occluded"]=False
         with open("./"+ output_dir2 + "/" + prefix + "_" + name[2:], 'w') as out_file:
             json.dump(img_dict, out_file)

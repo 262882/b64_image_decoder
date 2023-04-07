@@ -17,9 +17,7 @@ for count, name in enumerate(img_list):
     with open(name, 'r') as input_file:
         img_dict = json.load(input_file)
         
-    ball_vector = np.asarray(img_dict["ball_locate"])
     img_dict["type"]="drill"
-    img_dict["occluded"]=False
 
     with open("./processed/" + name[2:], 'w') as out_file:
         json.dump(img_dict, out_file)
