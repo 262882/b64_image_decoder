@@ -21,7 +21,7 @@ def decode(encoded_image, m, n):
 def add_bb(image, ball_vector):
     BALL_RAD = 0.042
     FOV = 58
-    eff_FOV =  61  #2*np.arctan2(np.radians(np.tan(FOV/2)),sqrt(2))
+    eff_FOV =  58  #2*np.arctan2(np.radians(np.tan(FOV/2)),sqrt(2))
     r_ball = ball_vector[0]
     theta_ball = ball_vector[1]
     phi_ball = ball_vector[2]
@@ -45,12 +45,18 @@ def add_bb(image, ball_vector):
     w_implane = r_ball_cam*np.radians(FOV//2)*2
     BALL_RAD_implane = (BALL_RAD/w_implane*resolution)
 
-    # Localization
-    m_delta_implane = phi_ball_cam/(eff_FOV/2)
-    n_delta_implane = theta_ball_cam/(eff_FOV/2)
+    # Position on arc
+    m_delta_arc = np.sin(np.radians(phi_ball_cam))/np.sin(np.radians(FOV/2))
+    n_delta_arc = np.sin(np.radians(theta_ball_cam))/np.sin(np.radians(FOV/2))
+    delta_ang = np.rad2deg(np.arctan2(m_delta_arc, n_delta_arc))
 
-    m_coord = (m/2)-1-(m_delta_implane*(resolution/2))
-    n_coord = (n/2)-1-(n_delta_implane*(resolution/2))
+    # Position on plane
+    rd = np.tan(np.arccos(np.cos(np.radians(phi_ball_cam))*np.cos(np.radians(theta_ball_cam))))/np.tan(np.radians(FOV/2))
+    m_delta_plane = rd*np.sin(np.radians(delta_ang))
+    n_delta_plane = rd*np.cos(np.radians(delta_ang))
+
+    m_coord = (m/2)-1-(m_delta_plane)*(resolution/2)
+    n_coord = (n/2)-1-(n_delta_plane)*(resolution/2)
 
     cv2.rectangle(image, (ceil(n_coord - BALL_RAD_implane), ceil(m_coord - BALL_RAD_implane)), 
                               (floor(n_coord + BALL_RAD_implane), floor(m_coord + BALL_RAD_implane)), (255, 0, 0), 2)
