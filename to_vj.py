@@ -55,7 +55,6 @@ except FileExistsError:
 img_list = glob.glob(os.path.join('./'+ set + "/", "*.json"))
 
 images = []
-pos_img_id = 1
 neg_annotations = []
 pos_annotations = []
 SMALL_THRES = 32  # height in pixels
@@ -113,12 +112,11 @@ for count, name in enumerate(img_list):
 
         img_name = name[3+len(set):-5] + ".jpeg"
         pos_annotations.append(
-            pos_dir + img_name + "  " +
-            str(pos_img_id) + "  " +
-            str(int(m_coord+BALL_RAD_implane)) + " " + str(int(n_coord+BALL_RAD_implane)) + " " +
-            str(int(m_coord-BALL_RAD_implane)) + " " + str(int(n_coord-BALL_RAD_implane))
+            img_name + "  " +
+            str(1) + "  " +
+            str(int(n_coord-BALL_RAD_implane)) + " " + str(int(m_coord-BALL_RAD_implane)) + " " +
+            str(int(2*BALL_RAD_implane)) + " " + str(int(2*BALL_RAD_implane))
             )
-        pos_img_id = pos_img_id + 1
    
         # store result
         output = Image.fromarray(output_img)
@@ -127,7 +125,7 @@ for count, name in enumerate(img_list):
     elif img_dict["ball_sighted"]==0:
 
         img_name = name[2+len(set):-5] + ".jpeg"
-        neg_annotations.append(neg_dir + img_name)
+        neg_annotations.append(img_name)
    
         # store result
         output = Image.fromarray(output_img)
@@ -140,4 +138,3 @@ with open("./" + pos_dir + "info.dat", 'w') as out_file:
 with open("./" + neg_dir + "bg.txt", 'w') as out_file:
     for row in neg_annotations:
         out_file.write(row + '\n')
-        
