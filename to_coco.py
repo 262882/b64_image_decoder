@@ -6,7 +6,7 @@ import os
 import glob
 import numpy as np
 from datetime import date
-from decode import decode
+from decode import decode, translate_coords
 from PIL import Image
 
 def iterable_list(in_list):
@@ -21,11 +21,11 @@ set_options = ["train", "validation", "test"]  # Only choose one
 size_options = ["s", "m", "l"]  # One or all
 sighted_options = [0, 1]  # Either or both
 occlusion_options = [False, True]  # Either or both
-type_options = ["game", "drill"]  # Either or both
+type_options = ["match", "drill"]  # Either or both
 
 set = set_options[0]
 size = size_options[1]  # Large == close
-sighted = sighted_options[1]
+sighted = sighted_options[:]
 occlusion = occlusion_options[0]
 type = type_options[:]
 
@@ -69,6 +69,8 @@ images = []
 img_id = 1
 annotations = []
 anno_id = 1
+SMALL_THRES = 32  # height in pixels
+LARGE_THRES = 96 
 
 for count, name in enumerate(img_list):
     print(count+1, "/", len(img_list), "Images processed")
@@ -100,28 +102,10 @@ for count, name in enumerate(img_list):
     if img_dict["ball_sighted"] ==1:
 
         ball_vector = np.asarray(img_dict["ball_locate"])
+        m_coord, n_coord, BALL_RAD_implane = translate_coords(output_img, ball_vector)
 
-        SMALL_THRES = 32  # height in pixels
-        LARGE_THRES = 96 
-        BALL_RAD = 0.042
-        FOV = 58
-        r_ball = ball_vector[0]
-        theta_ball = ball_vector[1]
-        phi_ball = ball_vector[2]
-
-        # Image plane properties
-        resolution = max(m,n)
-        w_implane = r_ball*np.tan(np.deg2rad(FOV//2))*2
-        BALL_RAD_implane = int((BALL_RAD/w_implane*resolution))
-
-        # Localization
-        m_delta_implane = phi_ball/(FOV/2)
-        n_delta_implane = theta_ball/(FOV/2)
-        m_coord = -int(m_delta_implane*(resolution/2))+(m//2)
-        n_coord = -int(n_delta_implane*(resolution/2))+(n//2)
-
-        bb_coords = [n_coord - BALL_RAD_implane, m_coord - BALL_RAD_implane,  # Top left coordds 
-                     2*BALL_RAD_implane, 2*BALL_RAD_implane]                      # Width and height
+        bb_coords = [n_coord - BALL_RAD_implane, m_coord - BALL_RAD_implane,  # Top left coords 
+                    2*BALL_RAD_implane, 2*BALL_RAD_implane]                   # Width and height
 
         if size == "s":
             if 2*BALL_RAD_implane <= SMALL_THRES:
