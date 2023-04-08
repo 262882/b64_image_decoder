@@ -18,7 +18,7 @@ def decode(encoded_image, m, n):
     output_img = output_img[::-1].copy()   # Rotate 180 degrees
     return output_img
 
-def add_bb(image, ball_vector):
+def translate_coords(image, ball_vector):
     BALL_RAD = 0.042
     FOV = 58
     eff_FOV =  58  #2*np.arctan2(np.radians(np.tan(FOV/2)),sqrt(2))
@@ -58,8 +58,12 @@ def add_bb(image, ball_vector):
     m_coord = (m/2)-1-(m_delta_plane)*(resolution/2)
     n_coord = (n/2)-1-(n_delta_plane)*(resolution/2)
 
+    return m_coord, n_coord, BALL_RAD_implane
+
+def add_bb(image, ball_vector):
+    m_coord, n_coord, BALL_RAD_implane = translate_coords(image, ball_vector)
     cv2.rectangle(image, (ceil(n_coord - BALL_RAD_implane), ceil(m_coord - BALL_RAD_implane)), 
-                              (floor(n_coord + BALL_RAD_implane), floor(m_coord + BALL_RAD_implane)), (255, 0, 0), 2)
+                              (floor(n_coord + BALL_RAD_implane), floor(m_coord + BALL_RAD_implane)), (255, 0, 0), 1)
 
 if __name__ == "__main__":
 
