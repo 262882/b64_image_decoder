@@ -124,8 +124,8 @@ for count, name in enumerate(img_list):
 
     elif img_dict["ball_sighted"]==0:
 
-        img_name = name[2+len(set):-5] + ".jpeg"
-        neg_annotations.append(img_name)
+        img_name = name[3+len(set):-5] + ".jpeg"
+        neg_annotations.append(neg_dir + img_name)
    
         # store result
         output = Image.fromarray(output_img)
