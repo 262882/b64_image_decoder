@@ -21,11 +21,13 @@ set_options = ["train", "validation", "test"]  # Only choose one
 size_options = ["s", "m", "l"]  # One or all
 occlusion_options = [False, True]  # Either or both
 type_options = ["match", "drill"]  # Either or both
+#edge_detect = [False, True]  # Either 
 
 set = set_options[0]
 size = size_options[1]  # Large == close
 occlusion = occlusion_options[0]
 type = type_options[:]
+#edge_detect[0]
 
 output_dir = (
     "./" + output_prefix 
@@ -118,8 +120,14 @@ for count, name in enumerate(img_list):
             str(int(2*BALL_RAD_implane)) + " " + str(int(2*BALL_RAD_implane))
             )
    
-        # store result
+        # process result
         output = Image.fromarray(output_img)
+
+        #if (edge_detect):
+            #final = output.filter(ImageFilter.Kernel((3, 3), (-1, -1, -1, -1, 8,
+            #                                  -1, -1, -1, -1), 1, 0))
+
+        # store result
         output.save(pos_dir + img_name)
 
     elif img_dict["ball_sighted"]==0:
