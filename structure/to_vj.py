@@ -8,6 +8,7 @@ import numpy as np
 from datetime import date
 from PIL import Image
 import sys
+import cv2
 sys.path.append(os.path.join(sys.path[0], '../processing/'))
 from decode import decode, translate_coords
 
@@ -23,13 +24,13 @@ set_options = ["train", "validation", "test"]  # Only choose one
 size_options = ["s", "m", "l"]  # One or all
 occlusion_options = [False, True]  # Either or both
 type_options = ["match", "drill"]  # Either or both
-#edge_detect = [False, True]  # Either 
+edge_detect = [False, True]  # Either 
 
 set = set_options[0]
 size = size_options[1]  # Large == close
 occlusion = occlusion_options[0]
 type = type_options[:]
-#edge_detect[0]
+edge = edge_detect[1]
 
 output_dir = (
     "./" + output_prefix 
@@ -123,13 +124,18 @@ for count, name in enumerate(img_list):
             )
    
         # process result
-        output = Image.fromarray(output_img)
+        if (edge):
+            ddepth = cv2.CV_16S
+            kernel_size = 3
+            grey_img = cv2.cvtColor(output_img, cv2.COLOR_BGR2GRAY)
+            edge_img = cv2.Laplacian(grey_img, ddepth, ksize=kernel_size)
+            final = edge_img>np.max(edge_img)*0.1
 
-        #if (edge_detect):
-            #final = output.filter(ImageFilter.Kernel((3, 3), (-1, -1, -1, -1, 8,
-            #                                  -1, -1, -1, -1), 1, 0))
+        else:
+            final = output_img
 
         # store result
+        output = Image.fromarray(final)
         output.save(pos_dir + img_name)
 
     elif img_dict["ball_sighted"]==0:
