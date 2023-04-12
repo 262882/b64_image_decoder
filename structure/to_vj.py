@@ -6,8 +6,10 @@ import os
 import glob
 import numpy as np
 from datetime import date
-from decode import decode, translate_coords
 from PIL import Image
+import sys
+sys.path.append(os.path.join(sys.path[0], '../processing/'))
+from decode import decode, translate_coords
 
 def iterable_list(in_list):
     if isinstance(in_list, list):
