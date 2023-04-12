@@ -37,7 +37,8 @@ output_dir = (
     + "_" + set 
     + "_" + "".join(size) 
     + "_" + "".join(str(val) for val in iterable_list(occlusion))
-    + "_" + "".join(type)  + "/")
+    + "_" + "".join(type)
+    + "_" + str(edge) + "/")
 
 neg_dir = output_dir+"neg/"
 pos_dir = output_dir+"pos/"
@@ -86,6 +87,16 @@ for count, name in enumerate(img_list):
     output_img = decode(img_dict['img'], img_dict['h_img'], img_dict['w_img'])
     m, n = output_img.shape[:2]
 
+    # process images
+    if (edge):
+        ddepth = cv2.CV_16S
+        kernel_size = 3
+        grey_img = cv2.cvtColor(output_img, cv2.COLOR_BGR2GRAY)
+        edge_img = cv2.Laplacian(grey_img, ddepth, ksize=kernel_size)
+        final = edge_img>100
+    else:
+        final = output_img
+
     if img_dict["ball_sighted"]==1:
 
         ball_vector = np.asarray(img_dict["ball_locate"])
@@ -122,17 +133,6 @@ for count, name in enumerate(img_list):
             str(int(n_coord-BALL_RAD_implane)) + " " + str(int(m_coord-BALL_RAD_implane)) + " " +
             str(int(2*BALL_RAD_implane)) + " " + str(int(2*BALL_RAD_implane))
             )
-   
-        # process result
-        if (edge):
-            ddepth = cv2.CV_16S
-            kernel_size = 3
-            grey_img = cv2.cvtColor(output_img, cv2.COLOR_BGR2GRAY)
-            edge_img = cv2.Laplacian(grey_img, ddepth, ksize=kernel_size)
-            final = edge_img>np.max(edge_img)*0.1
-
-        else:
-            final = output_img
 
         # store result
         output = Image.fromarray(final)
@@ -144,7 +144,7 @@ for count, name in enumerate(img_list):
         neg_annotations.append(neg_dir + img_name)
    
         # store result
-        output = Image.fromarray(output_img)
+        output = Image.fromarray(final)
         output.save(neg_dir + img_name)
 
 with open("./" + pos_dir + "info.dat", 'w') as out_file:
