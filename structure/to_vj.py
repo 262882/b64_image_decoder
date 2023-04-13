@@ -93,7 +93,8 @@ for count, name in enumerate(img_list):
         kernel_size = 3
         grey_img = cv2.cvtColor(output_img, cv2.COLOR_BGR2GRAY)
         edge_img = cv2.Laplacian(grey_img, ddepth, ksize=kernel_size)
-        final = edge_img>100
+        final = np.array((edge_img>100)*255, dtype='uint8')
+
     else:
         final = output_img
 
