@@ -235,7 +235,7 @@ for count, name in enumerate(img_list):
         })
         anno_id = anno_id + 1
 
-    img_name = name[2+len(set):-5] + ".jpeg"
+    img_name = name[3+len(set):-5] + ".jpeg"
     images.append({
         "file_name": img_name,
         "height": m,
