@@ -55,11 +55,21 @@ def ballSpherical2bb(R_, theta, phi, im_shape, BALL_RAD = 0.042, FOV = 58):
 
 def ballbb2Spherical(m_coord, n_coord, BALL_RAD_implane, im_shape, BALL_RAD = 0.042, FOV = 58):
 
+    # Image plane properties
     m, n = im_shape[:2]
     resolution = max(m, n)
     w_implane = BALL_RAD*resolution/BALL_RAD_implane
-
     R_ = w_implane/(np.radians(FOV//2)*2)
+
+    # Position on plane
+    m_delta_plane = ((m/2)-1-m_coord)/(resolution/2)
+    n_delta_plane = ((n/2)-1-n_coord)/(resolution/2)
+    rd = np.linalg.norm([m_delta_plane, n_delta_plane])
+
+    # Position on arc    
+    delta_ang = np.rad2deg(np.arcsin(m_delta_plane/rd))
+    #theta = np.rad2deg()
+    #phi = np.rad2deg()
 
     return R_ #, theta, phi
 
