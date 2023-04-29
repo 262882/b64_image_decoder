@@ -33,7 +33,6 @@ def cartesian2spherical(x_, y_, z_):
 def translate_coords(image, ball_vector):
     BALL_RAD = 0.042
     FOV = 58
-    eff_FOV =  58  #2*np.arctan2(np.radians(np.tan(FOV/2)),sqrt(2))
     r_ball = ball_vector[0]
     theta_ball = ball_vector[1]
     phi_ball = ball_vector[2]
