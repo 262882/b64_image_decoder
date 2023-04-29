@@ -30,6 +30,29 @@ def cartesian2spherical(x_, y_, z_):
     phi = np.rad2deg(np.arcsin(z_/R_))
     return R_, theta, phi
 
+def ballSpherical2bb(R_, theta, phi, im_shape, BALL_RAD = 0.042, FOV = 58):
+
+    # Image plane properties
+    m,n = im_shape[:2]
+    resolution = max(m, n)
+    w_implane = R_*np.radians(FOV//2)*2
+    BALL_RAD_implane = (BALL_RAD/w_implane*resolution)
+
+    # Position on arc
+    m_delta_arc = np.sin(np.radians(phi))/np.sin(np.radians(FOV/2))
+    n_delta_arc = np.sin(np.radians(theta))/np.sin(np.radians(FOV/2))
+    delta_ang = np.rad2deg(np.arctan2(m_delta_arc, n_delta_arc))
+
+    # Position on plane
+    rd = np.tan(np.arccos(np.cos(np.radians(phi))*np.cos(np.radians(theta))))/np.tan(np.radians(FOV/2))
+    m_delta_plane = rd*np.sin(np.radians(delta_ang))
+    n_delta_plane = rd*np.cos(np.radians(delta_ang))
+
+    m_coord = (m/2)-1-(m_delta_plane)*(resolution/2)
+    n_coord = (n/2)-1-(n_delta_plane)*(resolution/2)
+
+    return m_coord, n_coord, BALL_RAD_implane
+
 def translate_coords(image, ball_vector):
     BALL_RAD = 0.042
     FOV = 58
@@ -44,25 +67,7 @@ def translate_coords(image, ball_vector):
     x, y = y, x - NAO_HEAD
     r_ball_cam, theta_ball_cam, phi_ball_cam = cartesian2spherical(y, x, z)
 
-    # Image plane properties
-    resolution = max(m,n)
-    w_implane = r_ball_cam*np.radians(FOV//2)*2
-    BALL_RAD_implane = (BALL_RAD/w_implane*resolution)
-
-    # Position on arc
-    m_delta_arc = np.sin(np.radians(phi_ball_cam))/np.sin(np.radians(FOV/2))
-    n_delta_arc = np.sin(np.radians(theta_ball_cam))/np.sin(np.radians(FOV/2))
-    delta_ang = np.rad2deg(np.arctan2(m_delta_arc, n_delta_arc))
-
-    # Position on plane
-    rd = np.tan(np.arccos(np.cos(np.radians(phi_ball_cam))*np.cos(np.radians(theta_ball_cam))))/np.tan(np.radians(FOV/2))
-    m_delta_plane = rd*np.sin(np.radians(delta_ang))
-    n_delta_plane = rd*np.cos(np.radians(delta_ang))
-
-    m_coord = (m/2)-1-(m_delta_plane)*(resolution/2)
-    n_coord = (n/2)-1-(n_delta_plane)*(resolution/2)
-
-    return m_coord, n_coord, BALL_RAD_implane
+    return ballSpherical2bb(r_ball_cam, theta_ball_cam, phi_ball_cam, image.shape[:2])
 
 def add_bb(image, ball_vector):
     m_coord, n_coord, BALL_RAD_implane = translate_coords(image, ball_vector)
