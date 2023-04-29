@@ -18,6 +18,18 @@ def decode(encoded_image, m, n):
     output_img = output_img[::-1].copy()   # Rotate 180 degrees
     return output_img
 
+def spherical2cartesian(R_, theta, phi):
+    x_ = R_ * np.cos(np.radians(phi)) * np.cos(np.radians(theta))
+    y_ = R_ * np.cos(np.radians(phi)) * np.sin(np.radians(theta))
+    z_ = R_ * np.sin(np.radians(phi))
+    return x_, y_, z_
+
+def cartesian2spherical(x_, y_, z_):
+    R_ = np.linalg.norm([x_, y_, z_])
+    theta = np.rad2deg(np.arctan2(y_,x_))
+    phi = np.rad2deg(np.arcsin(z_/R_))
+    return R_, theta, phi
+
 def translate_coords(image, ball_vector):
     BALL_RAD = 0.042
     FOV = 58
@@ -29,16 +41,9 @@ def translate_coords(image, ball_vector):
 
     # Coord transform local to camera
     NAO_HEAD = 0.065  # Camera offset
-
-    # Spherical to cartesian
-    x = r_ball*np.cos(np.radians(phi_ball))*np.sin(np.radians(theta_ball))
-    y = r_ball*np.cos(np.radians(phi_ball))*np.cos(np.radians(theta_ball))-NAO_HEAD
-    z = r_ball*np.sin(np.radians(phi_ball))
-
-    # Cartesian to spherical
-    r_ball_cam = np.linalg.norm([x,y,z])
-    phi_ball_cam = np.rad2deg(np.arcsin(z/r_ball_cam))
-    theta_ball_cam = np.rad2deg(np.arctan2(x,y))
+    x, y, z = spherical2cartesian(r_ball, theta_ball, phi_ball)
+    x, y = y, x - NAO_HEAD
+    r_ball_cam, theta_ball_cam, phi_ball_cam = cartesian2spherical(y, x, z)
 
     # Image plane properties
     resolution = max(m,n)
