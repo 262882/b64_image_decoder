@@ -53,6 +53,16 @@ def ballSpherical2bb(R_, theta, phi, im_shape, BALL_RAD = 0.042, FOV = 58):
 
     return m_coord, n_coord, BALL_RAD_implane
 
+def ballbb2Spherical(m_coord, n_coord, BALL_RAD_implane, im_shape, BALL_RAD = 0.042, FOV = 58):
+
+    m, n = im_shape[:2]
+    resolution = max(m, n)
+    w_implane = BALL_RAD*resolution/BALL_RAD_implane
+
+    R_ = w_implane/(np.radians(FOV//2)*2)
+
+    return R_ #, theta, phi
+
 def translate_coords(image, ball_vector):
     BALL_RAD = 0.042
     FOV = 58
@@ -66,6 +76,9 @@ def translate_coords(image, ball_vector):
     x, y, z = spherical2cartesian(r_ball, theta_ball, phi_ball)
     x, y = y, x - NAO_HEAD
     r_ball_cam, theta_ball_cam, phi_ball_cam = cartesian2spherical(y, x, z)
+
+    print(r_ball_cam, theta_ball_cam, phi_ball_cam)
+    print(ballbb2Spherical(*ballSpherical2bb(r_ball_cam, theta_ball_cam, phi_ball_cam, image.shape[:2]), image.shape[:2]))
 
     return ballSpherical2bb(r_ball_cam, theta_ball_cam, phi_ball_cam, image.shape[:2])
 
