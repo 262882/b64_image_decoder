@@ -44,7 +44,8 @@ def ballSpherical2bb(R_, theta, phi, im_shape, BALL_RAD = 0.042, FOV = 58):
     delta_ang = np.rad2deg(np.arctan2(m_delta_arc, n_delta_arc))
 
     # Position on plane
-    rd = np.tan(np.arccos(np.cos(np.radians(phi))*np.cos(np.radians(theta))))/np.tan(np.radians(FOV/2))
+    spher_ang = np.rad2deg(np.arccos(np.cos(np.radians(phi))*np.cos(np.radians(theta))))
+    rd = np.tan(np.radians(spher_ang))/np.tan(np.radians(FOV/2))
     m_delta_plane = rd*np.sin(np.radians(delta_ang))
     n_delta_plane = rd*np.cos(np.radians(delta_ang))
 
@@ -64,14 +65,15 @@ def ballbb2Spherical(m_coord, n_coord, BALL_RAD_implane, im_shape, BALL_RAD = 0.
     # Position on plane
     m_delta_plane = ((m/2)-1-m_coord)/(resolution/2)
     n_delta_plane = ((n/2)-1-n_coord)/(resolution/2)
-    rd = np.linalg.norm([m_delta_plane, n_delta_plane])
+    rd = np.linalg.norm([m_delta_plane, n_delta_plane])  # How must be scaled?
+    delta_ang = np.rad2deg(np.arctan2(m_delta_plane, n_delta_plane))
 
     # Position on arc    
-    delta_ang = np.rad2deg(np.arcsin(m_delta_plane/rd))
-    #theta = np.rad2deg()
-    #phi = np.rad2deg()
+    spher_ang = np.rad2deg(np.arctan(rd*np.tan(np.radians(FOV/2))))
+    phi = spher_ang*np.sin(np.radians(delta_ang))
+    theta = spher_ang*np.cos(np.radians(delta_ang))
 
-    return R_ #, theta, phi
+    return R_, theta, phi
 
 def translate_coords(image, ball_vector):
     BALL_RAD = 0.042
@@ -86,9 +88,6 @@ def translate_coords(image, ball_vector):
     x, y, z = spherical2cartesian(r_ball, theta_ball, phi_ball)
     x, y = y, x - NAO_HEAD
     r_ball_cam, theta_ball_cam, phi_ball_cam = cartesian2spherical(y, x, z)
-
-    print(r_ball_cam, theta_ball_cam, phi_ball_cam)
-    print(ballbb2Spherical(*ballSpherical2bb(r_ball_cam, theta_ball_cam, phi_ball_cam, image.shape[:2]), image.shape[:2]))
 
     return ballSpherical2bb(r_ball_cam, theta_ball_cam, phi_ball_cam, image.shape[:2])
 
