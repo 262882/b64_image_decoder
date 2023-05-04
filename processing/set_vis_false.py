@@ -6,7 +6,7 @@ import os
 import glob
 import numpy as np
 import cv2
-from decode import decode, add_bb
+from decode import decode, add_bb_frmcamsph
 
 output_dir = "vis_false"
 try:
@@ -26,7 +26,7 @@ for count, name in enumerate(img_list):
 
     ball_vector = np.asarray(img_dict["ball_locate"])
     if img_dict["ball_sighted"]==1 and np.sum(np.abs(ball_vector)) != 0 :
-        add_bb(output_img, ball_vector)
+        add_bb_frmcamsph(output_img, ball_vector, color = (0,0,255))
 
         # Display and sort
         cv2.imshow('Frame', output_img)

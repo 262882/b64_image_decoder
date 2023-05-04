@@ -9,7 +9,7 @@ from datetime import date
 from PIL import Image
 import sys
 sys.path.append(os.path.join(sys.path[0], '../processing/'))
-from decode import decode, translate_coords
+from decode import decode, transform_camsph2bb
 
 def iterable_list(in_list):
     if isinstance(in_list, list):
@@ -194,7 +194,7 @@ for count, name in enumerate(img_list):
     if img_dict["ball_sighted"] ==1:
 
         ball_vector = np.asarray(img_dict["ball_locate"])
-        m_coord, n_coord, BALL_RAD_implane = translate_coords(output_img, ball_vector)
+        m_coord, n_coord, BALL_RAD_implane = transform_camsph2bb(output_img, ball_vector)
 
         bb_coords = [n_coord - BALL_RAD_implane, m_coord - BALL_RAD_implane,  # Top left coords 
                     2*BALL_RAD_implane, 2*BALL_RAD_implane]                   # Width and height

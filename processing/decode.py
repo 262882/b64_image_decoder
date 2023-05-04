@@ -75,7 +75,7 @@ def ballbb2Spherical(m_coord, n_coord, BALL_RAD_implane, im_shape, BALL_RAD = 0.
 
     return R_, theta, phi
 
-def translate_coords(image, ball_vector):
+def transform_camsph2bb(image, ball_vector):
     BALL_RAD = 0.042
     FOV = 58
     r_ball = ball_vector[0]
@@ -91,11 +91,21 @@ def translate_coords(image, ball_vector):
 
     return ballSpherical2bb(r_ball_cam, theta_ball_cam, phi_ball_cam, image.shape[:2])
 
-def add_bb(image, ball_vector):
-    m_coord, n_coord, BALL_RAD_implane = translate_coords(image, ball_vector)
+def add_bb_frmcamsph(image, ball_vector, color = (255, 0, 0)):
+    m_coord, n_coord, BALL_RAD_implane = transform_camsph2bb(image, ball_vector)
     cv2.rectangle(image, (ceil(n_coord - BALL_RAD_implane), ceil(m_coord - BALL_RAD_implane)), 
-                              (floor(n_coord + BALL_RAD_implane), floor(m_coord + BALL_RAD_implane)), (255, 0, 0), 1)
-
+                              (floor(n_coord + BALL_RAD_implane), floor(m_coord + BALL_RAD_implane)), color, 1)
+    
+def add_bb_frmsph(image, ball_vector, color = (255, 0, 0)):
+    m_coord, n_coord, BALL_RAD_implane = ballSpherical2bb(ball_vector[0], ball_vector[1], ball_vector[2], image.shape[:2])
+    cv2.rectangle(image, (ceil(n_coord - BALL_RAD_implane), ceil(m_coord - BALL_RAD_implane)), 
+                              (floor(n_coord + BALL_RAD_implane), floor(m_coord + BALL_RAD_implane)), color, 1)
+    
+def add_bb_frmbb(image, boxes, color = (255, 0, 0)):
+    m_coord, n_coord, BALL_RAD_implane = boxes
+    cv2.rectangle(image, (ceil(n_coord - BALL_RAD_implane), ceil(m_coord - BALL_RAD_implane)), 
+                              (floor(n_coord + BALL_RAD_implane), floor(m_coord + BALL_RAD_implane)), color, 1)
+    
 if __name__ == "__main__":
 
     output_dir = "decode"
@@ -127,7 +137,7 @@ if __name__ == "__main__":
 
         if include_bb and (img_dict["ball_sighted"]==1 and np.linalg.norm(img_dict["ball_locate"])>0):
             ball_vector = np.asarray(img_dict["ball_locate"])
-            add_bb(output_img, ball_vector)
+            add_bb_frmcamsph(output_img, ball_vector, add_cam_offset = True)
 
         # store result
         output = Image.fromarray(output_img)

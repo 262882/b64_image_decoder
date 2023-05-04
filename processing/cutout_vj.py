@@ -6,7 +6,7 @@ import os
 import glob
 import numpy as np
 from datetime import date
-from decode import decode, translate_coords
+from decode import decode, transform_camsph2bb
 from PIL import Image
 
 def iterable_list(in_list):
@@ -65,7 +65,7 @@ for count, name in enumerate(img_list):
     if img_dict["ball_sighted"]==1:
 
         ball_vector = np.asarray(img_dict["ball_locate"])
-        m_coord, n_coord, BALL_RAD_implane = translate_coords(output_img, ball_vector)
+        m_coord, n_coord, BALL_RAD_implane = transform_camsph2bb(output_img, ball_vector)
 
         if size == "s":
             if 2*BALL_RAD_implane <= SMALL_THRES:
