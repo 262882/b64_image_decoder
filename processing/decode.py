@@ -91,6 +91,20 @@ def transform_camsph2bb(image, ball_vector):
 
     return ballSpherical2bb(r_ball_cam, theta_ball_cam, phi_ball_cam, image.shape[:2])
 
+def transform_cambb2sph(image, ball_boxes):
+    BALL_RAD = 0.042
+    FOV = 58
+    m, n = image.shape[:2]
+    m_coord_cam, n_coord_cam, rad_cam = ball_boxes
+    r_ball_cam, theta_ball_cam, phi_ball_cam = ballbb2Spherical(m_coord_cam, n_coord_cam, rad_cam, image.shape[:2])
+
+    # Coord transform camera to local
+    NAO_HEAD = 0.065  # Camera offset
+    x, y, z = spherical2cartesian(r_ball_cam, theta_ball_cam, phi_ball_cam)
+    x, y = y, x + NAO_HEAD
+
+    return cartesian2spherical(y, x, z)
+
 def add_bb_frmcamsph(image, ball_vector, color = (255, 0, 0)):
     m_coord, n_coord, BALL_RAD_implane = transform_camsph2bb(image, ball_vector)
     cv2.rectangle(image, (ceil(n_coord - BALL_RAD_implane), ceil(m_coord - BALL_RAD_implane)), 
