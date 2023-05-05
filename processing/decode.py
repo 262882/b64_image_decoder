@@ -105,20 +105,20 @@ def transform_cambb2sph(image, ball_boxes):
 
     return cartesian2spherical(y, x, z)
 
-def add_bb_frmcamsph(image, ball_vector, color = (255, 0, 0)):
+def add_bb_frmcamsph(image, ball_vector, color = (255, 0, 0), thick = 2):
     m_coord, n_coord, BALL_RAD_implane = transform_camsph2bb(image, ball_vector)
     cv2.rectangle(image, (ceil(n_coord - BALL_RAD_implane), ceil(m_coord - BALL_RAD_implane)), 
-                              (floor(n_coord + BALL_RAD_implane), floor(m_coord + BALL_RAD_implane)), color, 1)
+                              (floor(n_coord + BALL_RAD_implane), floor(m_coord + BALL_RAD_implane)), color, thick)
     
-def add_bb_frmsph(image, ball_vector, color = (255, 0, 0)):
+def add_bb_frmsph(image, ball_vector, color = (255, 0, 0), thick = 2):
     m_coord, n_coord, BALL_RAD_implane = ballSpherical2bb(ball_vector[0], ball_vector[1], ball_vector[2], image.shape[:2])
     cv2.rectangle(image, (ceil(n_coord - BALL_RAD_implane), ceil(m_coord - BALL_RAD_implane)), 
-                              (floor(n_coord + BALL_RAD_implane), floor(m_coord + BALL_RAD_implane)), color, 1)
+                              (floor(n_coord + BALL_RAD_implane), floor(m_coord + BALL_RAD_implane)), color, thick)
     
-def add_bb_frmbb(image, boxes, color = (255, 0, 0)):
+def add_bb_frmbb(image, boxes, color = (255, 0, 0), thick = 2):
     m_coord, n_coord, BALL_RAD_implane = boxes
     cv2.rectangle(image, (ceil(n_coord - BALL_RAD_implane), ceil(m_coord - BALL_RAD_implane)), 
-                              (floor(n_coord + BALL_RAD_implane), floor(m_coord + BALL_RAD_implane)), color, 1)
+                              (floor(n_coord + BALL_RAD_implane), floor(m_coord + BALL_RAD_implane)), color, thick)
     
 if __name__ == "__main__":
 
