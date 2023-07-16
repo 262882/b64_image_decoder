@@ -120,6 +120,10 @@ def add_bb_frmbb(image, boxes, color = (255, 0, 0), thick = 2):
     cv2.rectangle(image, (ceil(n_coord - BALL_RAD_implane), ceil(m_coord - BALL_RAD_implane)), 
                               (floor(n_coord + BALL_RAD_implane), floor(m_coord + BALL_RAD_implane)), color, thick)
     
+def add_ring_frmcamsph(image, ball_vector, color = (255, 0, 0), thick = 2):
+    m_coord, n_coord, BALL_RAD_implane = transform_camsph2bb(image, ball_vector)
+    cv2.circle(image, (ceil(n_coord), ceil(m_coord)), floor(BALL_RAD_implane), color, thick)
+    
 if __name__ == "__main__":
 
     output_dir = "decode"
